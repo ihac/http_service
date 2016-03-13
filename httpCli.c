@@ -19,7 +19,6 @@ void send_data(FILE *fd, const char *ip, unsigned int port) {
     char buf[255];
 
     serv_addr.sin_family = AF_INET;
-    /* bzero(&serv_addr.sin_zero, sizeof(serv_addr.sin_zero)); */
     serv_addr.sin_port = htons(port);
     ret_code = inet_pton(AF_INET, ip, (void *)(&serv_addr.sin_addr.s_addr));
     if (ret_code <= 0) {
@@ -28,25 +27,25 @@ void send_data(FILE *fd, const char *ip, unsigned int port) {
     }
 
     serv_fd = Socket(AF_INET, SOCK_STREAM, 0);
-    connect(serv_fd, (const struct sockaddr *)(&serv_addr), sizeof(serv_addr));
+    Connect(serv_fd, (const struct sockaddr *)(&serv_addr), sizeof(serv_addr));
 
     fseek(fd, 0L, SEEK_END);
     file_size = ftell(fd);
     fseek(fd, 0L, SEEK_SET);
 
     sprintf(buf, "POST %s HTTP/1.1\r\n", cgi_path);
-    Writen(serv_fd, buf, strlen(buf));
+    Written(serv_fd, buf, strlen(buf));
     sprintf(buf, "User-Agent: %s\r\n", user_agent);
-    Writen(serv_fd, buf, strlen(buf));
+    Written(serv_fd, buf, strlen(buf));
     sprintf(buf, "Content-Type: %s\r\n", content_type);
-    Writen(serv_fd, buf, strlen(buf));
+    Written(serv_fd, buf, strlen(buf));
     sprintf(buf, "Content-Length: %ld\r\n", file_size);
-    Writen(serv_fd, buf, strlen(buf));
+    Written(serv_fd, buf, strlen(buf));
     sprintf(buf, "\r\n");
-    Writen(serv_fd, buf, strlen(buf));
+    Written(serv_fd, buf, strlen(buf));
 
     while (fgets(buf, sizeof(buf), fd))
-        Writen(serv_fd, buf, strlen(buf));
+        Written(serv_fd, buf, strlen(buf));
 
     Close(serv_fd);
 }
@@ -55,6 +54,6 @@ int main(int argc, char *argv[])
     FILE *fd;
     fd = fopen("sensor1.dat", "r+");
 
-    send_data(fd, "10.214.128.100", 80);
+    send_data(fd, "10.214.128.100", 8080);
     return 0;
 }

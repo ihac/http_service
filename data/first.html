@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>This is my first html file</title>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+</head>
+    <body>
+        <h1>
+        这是我的第一个HTML页面
+        </h1>
+        <h2>
+        Binary semaphore与Mutex的差异
+        </h2>
+        <p>
+        a<sup>2</sup>+b<sub>0</sub>
+        在有的系统中Binary semaphore与Mutex是没有差异的。在有的系统上，主要的差异是mutex一定要由获得锁的进程来释放。而semaphore可以由其它进程释 放（这时的semaphore实际就是个原子的变量，大家可以加或减），因此semaphore可以用于进程间同步。Semaphore的同步功能是所有 系统都支持的，而Mutex能否由其他进程释放则未定，因此建议mutex只用于保护critical section。而semaphore则用于保护某变量，或者同步。
+        </p>
+        <p>
+        关于<mark>semaphore</mark>和mutex的区别，网上有著名的厕所理论（http://koti.mbnet.fi/niclasw/MutexSemaphore.html）：
+        </p>
+        <p>
+        <wbr />
+        <mark><b><i>HELLO, WORLD</i></b></mark>Mutex:Is a key to a toilet. One person can have the key - occupy the toilet - at the time. When finished, the person gives (frees) the key to the next person in the queue.Officially: “Mutexes are typically used to serialise access to a section of re-entrant code that cannot be executed concurrently by more than one thread. A mutex object only allows one thread into a controlled section, forcing other threads which attempt to gain access to that section to wait until the first thread has exited from that section.”
+        <br /><br />Ref: Symbian Developer Library(A mutex is really a semaphore with value 1.)
+        </p>
+    </body>
+</html>

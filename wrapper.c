@@ -22,6 +22,13 @@ int Bind(int sockfd, const struct sockaddr *myaddr, socklen_t addrlen) {
     return -1; // unused
 }
 
+int Connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen) {
+    if (!connect(sockfd, servaddr, addrlen))
+        return 0; // success
+    err_quit("connect()");
+    return -1; // unused
+}
+
 int Listen(int sockfd, int backlog) {
     if (listen(sockfd, backlog) == -1)
         err_quit("listen()");
@@ -79,7 +86,7 @@ ssize_t Readn(int fd, void *vptr, size_t n) {
     return (n - nleft);
 }
 
-ssize_t Writen(int fd, const void *vptr, size_t n) {
+ssize_t Written(int fd, const void *vptr, size_t n) {
     size_t nleft;
     ssize_t nwritten;
     const char *ptr;

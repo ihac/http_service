@@ -12,6 +12,12 @@
 #include <stdarg.h>
 #include <sys/select.h>
 
+#define OK                  200
+#define BAD_REQUEST         400
+#define NOT_FOUND           404
+#define NOT_IMPLEMENTED     501
+
+
 /* Library */
 int Socket(int family, int type, int protocol);
 int Connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen);
@@ -37,7 +43,9 @@ ssize_t Written(int fd, const void *buff, size_t nbytes);
 /* server */
 int read_line(int sockfd, char *buf, size_t size);
 int accept_request(int clifd);
-int send_response(int clifd, int mode);
+int send_response(int clifd, const char *path, int mode);
+
+void read_all(int sockfd);
 
 /* client */
 void send_data(FILE *fd, const char *ip, unsigned int port);
