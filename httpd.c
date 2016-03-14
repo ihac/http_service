@@ -11,6 +11,8 @@
 #include "strings.h"
 #include "string.h"
 
+#define DEBUG
+
 int read_line(int sockfd, char *buf, size_t len) {
     char c;
     unsigned int i = 0;
@@ -39,7 +41,13 @@ int accept_request(int clifd) {
     struct stat st;
 
     // read first line
+#ifdef DEBUG
+    printf("\033[49;31mstart read_line()\033[0m\n");
+#endif
     read_line(clifd, buf, sizeof(buf));
+#ifdef DEBUG
+    printf("\033[49;31mafter read_line()\033[0m\n");
+#endif
     printf ("buf = %s", buf);
     while (!isspace(buf[i])) {
         if (i >= sizeof(method) - 1) { // too long for method field, bad request
@@ -72,7 +80,11 @@ int accept_request(int clifd) {
     }
 
     /* we don't care http version here */
+    memset(path, 0, sizeof(path));
     sprintf(path, "data%s", uri); // we store file in directory 'data'
+#ifdef DEBUG
+    printf("\033[49;32mpath = %s\n\033[0m", path);
+#endif
 
     if (!strcasecmp(method, "POST")) {
         isCGI = 1;
@@ -81,6 +93,9 @@ int accept_request(int clifd) {
         if (path[strlen(path) - 1] == '/')
             strcat(path, "history.dat");
         if (stat(path, &st) == -1) {
+#ifdef DEBUG
+            printf("\033[49;32mpath = %s\n\033[0m", path);
+#endif
             read_all(clifd);
             send_response(clifd, NULL, NOT_FOUND);
             return -1;
@@ -106,10 +121,12 @@ void read_all(int clifd) {
 }
 
 const char *SERVER_STRING = "Ember/1.0";
-const char *CHARSET = "us-ascii";
+/* const char *CHARSET = "us-ascii"; */
 
 int send_response(int clifd, const char *path, int mode) {
-    printf("mode = %d\n", mode);
+#ifdef DEBUG
+    printf("\033[49;32mmode = %d\n\033[0m", mode);
+#endif
     char buf[255];
 
     switch (mode) {
@@ -118,14 +135,15 @@ int send_response(int clifd, const char *path, int mode) {
                     Written(clifd, buf, strlen(buf));
                     sprintf(buf, "Server: %s\r\n", SERVER_STRING);
                     Written(clifd, buf, strlen(buf));
-                    sprintf(buf, "Content-Type: text/html; charset=%s\r\n", CHARSET);
+                    sprintf(buf, "Content-Type: text/html\r\n");
                     Written(clifd, buf, strlen(buf));
                     strcpy(buf, "\r\n");
                     Written(clifd, buf, strlen(buf));
 
                     FILE *fd = fopen(path, "r");
-                    while (fgets(buf, sizeof(buf), fd))
+                    while (fgets(buf, sizeof(buf), fd)) {
                         Written(clifd, buf, strlen(buf));
+                    }
                     return 0;
                 }
         case BAD_REQUEST: {
@@ -133,7 +151,7 @@ int send_response(int clifd, const char *path, int mode) {
                     Written(clifd, buf, strlen(buf));
                     sprintf(buf, "Server: %s\r\n", SERVER_STRING);
                     Written(clifd, buf, strlen(buf));
-                    sprintf(buf, "Content-Type: text/html; charset=%s\r\n", CHARSET);
+                    sprintf(buf, "Content-Type: text/html\r\n");
                     Written(clifd, buf, strlen(buf));
                     strcpy(buf, "\r\n");
                     Written(clifd, buf, strlen(buf));
@@ -148,7 +166,7 @@ int send_response(int clifd, const char *path, int mode) {
                     Written(clifd, buf, strlen(buf));
                     sprintf(buf, "Server: %s\r\n", SERVER_STRING);
                     Written(clifd, buf, strlen(buf));
-                    sprintf(buf, "Content-Type: text/html; charset=%s\r\n", CHARSET);
+                    sprintf(buf, "Content-Type: text/html\r\n");
                     Written(clifd, buf, strlen(buf));
                     strcpy(buf, "\r\n");
                     Written(clifd, buf, strlen(buf));
@@ -163,7 +181,7 @@ int send_response(int clifd, const char *path, int mode) {
                     Written(clifd, buf, strlen(buf));
                     sprintf(buf, "Server: %s\r\n", SERVER_STRING);
                     Written(clifd, buf, strlen(buf));
-                    sprintf(buf, "Content-Type: text/html; charset=%s\r\n", CHARSET);
+                    sprintf(buf, "Content-Type: text/html\r\n");
                     Written(clifd, buf, strlen(buf));
                     strcpy(buf, "\r\n");
                     Written(clifd, buf, strlen(buf));
@@ -193,7 +211,7 @@ int main(int argc, char *argv[])
     Listen(servfd, 5);
 
     while ((clifd = Accept(servfd, (struct sockaddr *)&cliaddr, &cliaddr_len)) > 0) {
-        printf("accept clifd = %d\n", clifd);
+        printf("\033[49;32maccept clifd = %d\n\033[0m", clifd);
         accept_request(clifd);
         Close(clifd);
     }
