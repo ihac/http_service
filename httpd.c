@@ -60,6 +60,7 @@ int accept_request(int clifd) {
     }
     method[i] = '\0';
 
+    memset(uri, 0, sizeof(uri));
     while (isspace(buf[++i]));
     int j = 0;
     while (!isspace(buf[i])) {
@@ -78,6 +79,9 @@ int accept_request(int clifd) {
         uri[j] = buf[i];
         i++; j++;
     }
+#ifdef DEBUG
+    printf("\033[49;32muri = %s\n\033[0m", uri);
+#endif
 
     /* we don't care http version here */
     memset(path, 0, sizeof(path));
