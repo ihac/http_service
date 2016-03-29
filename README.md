@@ -1,1 +1,1 @@
-Customed `HTTP` protocol for `gateway`.
+Simple `HTTP` protocol for `gateway`.

@@ -141,6 +141,8 @@ int send_response(int clifd, const char *path, int mode) {
                     Written(clifd, buf, strlen(buf));
                     sprintf(buf, "Content-Type: text/html\r\n");
                     Written(clifd, buf, strlen(buf));
+                    /* strcpy(buf, "Connection: close\r\n"); */
+                    /* Written(clifd, buf, strlen(buf)); */
                     strcpy(buf, "\r\n");
                     Written(clifd, buf, strlen(buf));
 
@@ -157,6 +159,8 @@ int send_response(int clifd, const char *path, int mode) {
                     Written(clifd, buf, strlen(buf));
                     sprintf(buf, "Content-Type: text/html\r\n");
                     Written(clifd, buf, strlen(buf));
+                    strcpy(buf, "Connection: close\r\n");
+                    Written(clifd, buf, strlen(buf));
                     strcpy(buf, "\r\n");
                     Written(clifd, buf, strlen(buf));
 
@@ -167,10 +171,13 @@ int send_response(int clifd, const char *path, int mode) {
                 }
         case NOT_FOUND: {
                     strcpy(buf, "HTTP/1.1 404 Not Found\r\n");
+                    /* strcpy(buf, "HTTP/1.1 401 Unauthorized\r\n"); */
                     Written(clifd, buf, strlen(buf));
                     sprintf(buf, "Server: %s\r\n", SERVER_STRING);
                     Written(clifd, buf, strlen(buf));
                     sprintf(buf, "Content-Type: text/html\r\n");
+                    Written(clifd, buf, strlen(buf));
+                    strcpy(buf, "Connection: close\r\n");
                     Written(clifd, buf, strlen(buf));
                     strcpy(buf, "\r\n");
                     Written(clifd, buf, strlen(buf));
@@ -186,6 +193,8 @@ int send_response(int clifd, const char *path, int mode) {
                     sprintf(buf, "Server: %s\r\n", SERVER_STRING);
                     Written(clifd, buf, strlen(buf));
                     sprintf(buf, "Content-Type: text/html\r\n");
+                    Written(clifd, buf, strlen(buf));
+                    strcpy(buf, "Connection: close\r\n");
                     Written(clifd, buf, strlen(buf));
                     strcpy(buf, "\r\n");
                     Written(clifd, buf, strlen(buf));
