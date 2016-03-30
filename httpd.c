@@ -135,21 +135,24 @@ int send_response(int clifd, const char *path, int mode) {
 
     switch (mode) {
         case OK: {
-                    strcpy(buf, "HTTP/1.1 200 OK\r\n");
+                    /* strcpy(buf, "HTTP/1.1 200 OK\r\n"); */
+                    strcpy(buf, "HTTP/1.1 401 Unauthorized\r\n");
+                    Written(clifd, buf, strlen(buf));
+                    strcpy(buf, "WWW-Authenticate: Basic realm=\"We need to verify your identity.\"\r\n");
                     Written(clifd, buf, strlen(buf));
                     sprintf(buf, "Server: %s\r\n", SERVER_STRING);
                     Written(clifd, buf, strlen(buf));
-                    sprintf(buf, "Content-Type: text/html\r\n");
-                    Written(clifd, buf, strlen(buf));
-                    /* strcpy(buf, "Connection: close\r\n"); */
+                    /* sprintf(buf, "Content-Type: text/html\r\n"); */
                     /* Written(clifd, buf, strlen(buf)); */
-                    strcpy(buf, "\r\n");
-                    Written(clifd, buf, strlen(buf));
+                    /* [> strcpy(buf, "Connection: close\r\n"); <] */
+                    /* [> Written(clifd, buf, strlen(buf)); <] */
+                    /* strcpy(buf, "\r\n"); */
+                    /* Written(clifd, buf, strlen(buf)); */
 
-                    FILE *fd = fopen(path, "r");
-                    while (fgets(buf, sizeof(buf), fd)) {
-                        Written(clifd, buf, strlen(buf));
-                    }
+                    /* FILE *fd = fopen(path, "r"); */
+                    /* while (fgets(buf, sizeof(buf), fd)) { */
+                        /* Written(clifd, buf, strlen(buf)); */
+                    /* } */
                     return 0;
                 }
         case BAD_REQUEST: {
