@@ -240,8 +240,8 @@ int main(int argc, char *argv[])
      * file descriptor set
      */
     int maxfd;
-    fd_set read_set;
-    FD_ZERO(&read_set); // initial setting
+    fd_set all_set;
+    FD_ZERO(&all_set); // initial setting
 
     /*
      * set server socket address
@@ -260,11 +260,11 @@ int main(int argc, char *argv[])
      * add servfd into read_set
      * set maxfd as the biggest file descriptor
      */
-    FD_SET(servfd, &read_set);
+    FD_SET(servfd, &all_set);
     maxfd = servfd + 1;
 
     while (1) {
-        fd_set all_set = read_set;
+        fd_set read_set = all_set;
         int fd;
         Select(maxfd + 1, &read_set, NULL, NULL, NULL);
         for (fd = 0; fd <= maxfd; fd++) {
@@ -282,9 +282,9 @@ int main(int argc, char *argv[])
             else { // client socket is ready; client tries to say something
                 int status = accept_request(clifd);
                 if (status == 0) { // connection closed
-                    FD_CLR(clifd, &read_set); // remove clifd from read_set
+                    FD_CLR(clifd, &all_set); // remove clifd from read_set
                     if (clifd == maxfd) // update maxfd if maxfd == clifd
-                        while (!FD_ISSET(maxfd - 1, &read_set))
+                        while (!FD_ISSET(maxfd - 1, &all_set))
                             maxfd--;
                     Close(clifd);
                 }
