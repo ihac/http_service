@@ -17,8 +17,8 @@
  * TYPE - - DATE|TIME TRANSACTION COMMENT
  */
 
-/* extern int fd_access; */
-int fd_access;
+extern int fd_access;
+/* int fd_access; */
 extern int fd_error;
 
 #include "stdio.h"
@@ -40,27 +40,40 @@ int access_log(struct sockaddr_in remote, const char *request, const char *user_
     ip = inet_ntoa(remote.sin_addr);
     time(&rawtime);
     timeinfo = localtime(&rawtime);
-    strftime(time_str, sizeof(time_str), "%d/%b/%G:%X %z", timeinfo);
+    strftime(time_str, sizeof(time_str), "%d/%b/%G-%X %z", timeinfo);
     sprintf(record, "%s - - [%s] \"%s\" \"%s\"\n", ip, time_str, request, user_agent);
 
     Written(fd_access, record, strlen(record));
     return 0;
 }
 
-int main(int argc, char *argv[])
-{
-    fd_access = open("access.log", O_WRONLY | O_APPEND);
-    struct sockaddr_in servaddr;
-    bzero(&servaddr, sizeof(servaddr));
 
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+/* int main(int argc, char *argv[]) */
+/* { */
+    /* fd_access = open("access.log", O_WRONLY | O_APPEND); */
+    /* struct sockaddr_in servaddr; */
+    /* bzero(&servaddr, sizeof(servaddr)); */
 
-    access_log(servaddr, "GET / HTTP/1.1", "Ember");
+    /* servaddr.sin_family = AF_INET; */
+    /* servaddr.sin_addr.s_addr = htonl(INADDR_ANY); */
 
-    return 0;
-}
+    /* access_log(servaddr, "GET / HTTP/1.1", "Ember"); */
 
-/* int error_log(const char *comment) { */
-
+    /* return 0; */
 /* } */
+
+int error_log(unsigned int type, const char *action, const char *comment) {
+    char time_str[63];
+    char record[512];
+    time_t rawtime;
+    struct tm *timeinfo;
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(time_str, sizeof(time_str), "%Y/%m/%d %X", timeinfo);
+    /* strftime(time_str, sizeof(time_str), "%d/%b/%G-%x %z", timeinfo); */
+    /* sprintf(record, "<ERROR> #%d: [%s] \"%s\" \"%s\"", type, time_str, action, comment); */
+    sprintf(record, "%s [ERROR] #%d: \"%s\" \"%s\"", time_str, type, action, comment);
+
+    Written(fd_error, record, strlen(record));
+}
